@@ -27,24 +27,24 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         this.valor = valor;
     }
     this.descripcion = descripcion;
-    
+
     //Para la verificación de la fecha lei en MDM web docs que si el valor de Date.parse falla se devuelve NaN
-    if(!fecha || isNaN(Date.parse(fecha))) {
+    if (!fecha || isNaN(Date.parse(fecha))) {
         this.fecha = Date.now();
     } else {
         this.fecha = fecha;
     }
     //Verifica que la etiqueta no este vacia
-    if(!etiquetas || etiquetas.length === 0) {
+    if (!etiquetas || etiquetas.length === 0) {
         this.etiquetas = [];
-    }else {
+    } else {
         this.etiquetas = etiquetas;
     }
 
     this.mostrarGasto = function () {
         return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`
     }
-    this.mostrarGastoCompleto = function() {
+    this.mostrarGastoCompleto = function () {
         let mensaje = `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`;
         let fecha = `Fecha: ${this.fecha.toLocaleString()}`;
         let etiquetas = `Etiquetas: ${this.etiquetas.forEach((etiqueta) => "\n - " + etiqueta.toString())}`;
@@ -61,6 +61,41 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
             this.valor = nuevoValor;
         }
     }
+
+    this.actualizarFecha = function (fecha) {
+        if (!fecha || isNaN(Date.parse(fecha))) {
+            return
+        } else {
+            this.fecha = fecha;
+        }
+    }
+
+    this.anyadirEtiquetas = function (...etiquetaNueva) {
+        etiquetaNueva.forEach(element => {
+            //Verifico si ya existe la etiqueta
+            if (this.etiquetas.includes(element)) {
+                console.log(`La etiqueta "${element}" ya existe.`);
+            } else {
+                //Si no existe la agrego
+                this.etiquetas.push(element);
+                console.log(`Etiqueta "${element}" añadida.`);
+            }
+        });
+    }
+
+    this.borrarEtiquetas = function (...etiquetasBorrar) {
+        etiquetasBorrar.forEach(element => {
+            //Busco el index de la etiqueta
+            let index = this.etiquetas.indexOf(element);
+            
+            //Si es diferente a -1 quiere decir que existe y hay que eliminarlo
+            if(index > -1) {
+                this.etiquetas.splice(index, 1)
+            } else {
+                console.log(`No existe el ${element} en las etiquetas del gasto`);
+            }
+        });
+    }
 }
 
 function listarGastos() {
@@ -76,12 +111,12 @@ function anyadirGasto(gasto) {
 function borrarGasto(gasto) {
     let index = gastos.findIndex(gasto.id);
 
-    if(index > -1) {
-        gastos.splice(index);
+    if (index > -1) {
+        gastos.splice(index, 1);
     }
 }
 
-function calcularTotalGastos(){
+function calcularTotalGastos() {
     let total = 0;
 
     gastos.forEach(gasto => {
