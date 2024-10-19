@@ -4,7 +4,7 @@
 let presupuesto = 0;
 
 function actualizarPresupuesto(importe) {
-    if(importe <= 0 || isNaN(importe) == true) {
+    if(importe < 0 || isNaN(importe) == true) {
         console.log("El valor ingresado no es válido")
         return -1;
     }
@@ -19,7 +19,7 @@ function mostrarPresupuesto() {
 }
 
 function CrearGasto(descripcionGasto, valorGasto) {
-    if(valorGasto <= 0 || isNaN(valorGasto) == true) {
+    if(valorGasto < 0 || isNaN(valorGasto) == true) {
         this.valor = 0;
     } else {
         this.valor = valorGasto;
@@ -33,7 +33,7 @@ function CrearGasto(descripcionGasto, valorGasto) {
         this.descripcion = nuevaDescripcion;
     }
     this.actualizarValor = function(nuevoValor) {
-        if(nuevoValor <= 0 || isNaN(nuevoValor) == true) {
+        if(nuevoValor < 0 || isNaN(nuevoValor) == true) {
             return this.valor;
         } else {
             this.valor = nuevoValor;
