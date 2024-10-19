@@ -4,7 +4,6 @@
 let presupuesto = 0;
 
 function actualizarPresupuesto(importe) {
-    // TODO
     if(importe <= 0 || isNaN(importe) == true) {
         console.log("El valor ingresado no es válido")
         return -1;
@@ -16,12 +15,23 @@ function actualizarPresupuesto(importe) {
     
 
 function mostrarPresupuesto() {
-    // TODO
     console.log(`Tu presupuesto actual es de ${presupuesto} €`)
 }
 
 function CrearGasto() {
     // TODO
+    this.valor = 0;
+    this.descripcion = "";
+
+    function mostrarGasto() {
+        `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`
+    }
+    function actualizarDescripcion(nuevaDescripcion){
+        this.descripcion = nuevaDescripcion;
+    }
+    function actualizarValor(nuevoValor) {
+        this.valor = nuevoValor;
+    }
 }
 
 // NO MODIFICAR A PARTIR DE AQUÍ: exportación de funciones y objetos creados para poder ejecutar los tests.
