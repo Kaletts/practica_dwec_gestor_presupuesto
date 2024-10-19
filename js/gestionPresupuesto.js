@@ -48,7 +48,8 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     this.mostrarGastoCompleto = function () {
         let mensaje = `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €.`;
         let fecha = `\nFecha: ${new Date(this.fecha).toLocaleString()}`;
-        let etiquetas = `\nEtiquetas: ${this.etiquetas.map(etiqueta => "\n- " + etiqueta.toString()).join('')}`;
+        //Itero sobre el array usando map, paso a string y separo con \n para los espacios solicitados
+        let etiquetas = `\nEtiquetas:${this.etiquetas.map(etiqueta => "\n- " + etiqueta.toString()).join('')}\n`;
         return mensaje + fecha + etiquetas;
     }
 
