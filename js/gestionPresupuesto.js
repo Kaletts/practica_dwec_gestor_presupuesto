@@ -32,7 +32,7 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     if (!fecha || isNaN(Date.parse(fecha))) {
         this.fecha = Date.now();
     } else {
-        this.fecha = fecha;
+        this.fecha = new Date(fecha).getTime();
     }
     //Verifica que la etiqueta no este vacia
     if (!etiquetas || etiquetas.length === 0) {
@@ -42,15 +42,16 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     }
 
     this.mostrarGasto = function () {
-        return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`
+        return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €.`
     }
+
     this.mostrarGastoCompleto = function () {
-        let mensaje = `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`;
-        let fecha = `Fecha: ${this.fecha.toLocaleString()}`;
-        let etiquetas = `Etiquetas: ${this.etiquetas.forEach((etiqueta) => "\n - " + etiqueta.toString())}`;
-        mensaje.concat(fecha, etiquetas);
-        return mensaje;
+        let mensaje = `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €.`;
+        let fecha = `\nFecha: ${new Date(this.fecha).toLocaleString()}`;
+        let etiquetas = `\nEtiquetas: ${this.etiquetas.map(etiqueta => "\n- " + etiqueta.toString()).join('')}`;
+        return mensaje + fecha + etiquetas;
     }
+
     this.actualizarDescripcion = function (nuevaDescripcion) {
         this.descripcion = nuevaDescripcion;
     }
@@ -66,7 +67,7 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         if (!fecha || isNaN(Date.parse(fecha))) {
             return
         } else {
-            this.fecha = fecha;
+            this.fecha = new Date(fecha).getTime();
         }
     }
 
@@ -87,7 +88,7 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
         etiquetasBorrar.forEach(element => {
             //Busco el index de la etiqueta
             let index = this.etiquetas.indexOf(element);
-            
+
             //Si es diferente a -1 quiere decir que existe y hay que eliminarlo
             if(index > -1) {
                 this.etiquetas.splice(index, 1)
@@ -108,8 +109,8 @@ function anyadirGasto(gasto) {
     gastos.push(gasto);
 }
 
-function borrarGasto(gasto) {
-    let index = gastos.findIndex(gasto.id);
+function borrarGasto(gastoId) {
+    let index = gastos.findIndex(gasto => gasto.id === gastoId);
 
     if (index > -1) {
         gastos.splice(index, 1);
