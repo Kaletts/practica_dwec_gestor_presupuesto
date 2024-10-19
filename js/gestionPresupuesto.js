@@ -6,10 +6,10 @@ let presupuesto = 0;
 function actualizarPresupuesto(importe) {
     // TODO
     if(importe <= 0 || isNaN(importe) == true) {
-        alert("El valor ingresado no es válido")
+        console.log("El valor ingresado no es válido")
         return -1;
     }
-    presupuesto += importe;
+    presupuesto = importe;
 
     return presupuesto;
     }
