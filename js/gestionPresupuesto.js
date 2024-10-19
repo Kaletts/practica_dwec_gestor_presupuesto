@@ -15,23 +15,31 @@ function actualizarPresupuesto(importe) {
     
 
 function mostrarPresupuesto() {
-    console.log(`Tu presupuesto actual es de ${presupuesto} €`)
+    return `Tu presupuesto actual es de ${presupuesto} €`;
 }
 
-function CrearGasto() {
-    // TODO
-    this.valor = 0;
-    this.descripcion = "";
-
-    function mostrarGasto() {
-        `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`
+function CrearGasto(descripcionGasto, valorGasto) {
+    if(valorGasto <= 0 || isNaN(valorGasto) == true) {
+        this.valor = 0;
+    } else {
+        this.valor = valorGasto;
     }
-    function actualizarDescripcion(nuevaDescripcion){
+    this.descripcion = descripcionGasto;
+
+    this.mostrarGasto = function() {
+        return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`
+    }
+    this.actualizarDescripcion = function(nuevaDescripcion){
         this.descripcion = nuevaDescripcion;
     }
-    function actualizarValor(nuevoValor) {
-        this.valor = nuevoValor;
+    this.actualizarValor = function(nuevoValor) {
+        if(nuevoValor <= 0 || isNaN(nuevoValor) == true) {
+            return this.valor;
+        } else {
+            this.valor = nuevoValor;
+        }
     }
+   
 }
 
 // NO MODIFICAR A PARTIR DE AQUÍ: exportación de funciones y objetos creados para poder ejecutar los tests.
