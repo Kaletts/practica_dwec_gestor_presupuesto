@@ -105,16 +105,18 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     this.obtenerPeriodoAgrupacion = function (pAgrupacion) {
         let periodo;
         let nuevaFecha = new Date(this.fecha)
+        let mes = String(nuevaFecha.getMonth() + 1).padStart(2,"0")
+        let dia = String(nuevaFecha.getDate()).padStart(2,"0")
+        let anyo = new Date(this.fecha).getFullYear()
         switch (pAgrupacion) {
             case "anyo":
-                periodo = new Date(this.fecha).getFullYear()
+                periodo = anyo
                 break;
             case "mes":
-                let mes = String(nuevaFecha.getMonth() + 1).padStart(2,"0")
                 periodo = `${nuevaFecha.getFullYear()}-${mes}`
                 break
             case "dia":
-                periodo = new Date(this.fecha).getDay()
+                periodo = `${anyo}-${mes}-${dia}`
                 break
             default:
                 console.log("El periodo ingresado es incorrecto")
