@@ -183,6 +183,7 @@ function filtrarGastos(gasto) {
         let descripcionMinus = gasto.descripcionContiene.toLowerCase();
         resultados = resultados.filter(g => g.descripcion.toLowerCase().includes(descripcionMinus))
     }
+    //Me dejo esto explicado porque fue el filtro que más me costó
     if(gasto.etiquetasTiene) {
         //Paso a minusculas todas las etiquetas usando map y lowecase
         let etiquetasMinus = gasto.etiquetasTiene.map(etiqueta => etiqueta.toLowerCase());
@@ -208,8 +209,26 @@ function filtrarGastos(gasto) {
     return resultados;
 }
 
-function agruparGastos() {
+function agruparGastos(periodo = "mes", etiqueta = [], fechaDesde, fechaHasta) {
+    let gastosFiltrados = filtrarGastos({
+        etiquetasTiene : etiqueta.length > 0 ? etiqueta : undefined,
+        fechaDesde : fechaDesde,
+        fechaHasta : fechaHasta
+    });
 
+    let gastosAgrupados = gastosFiltrados.reduce(function (acc, gasto) {
+        
+        let periodoAgrupacion = gasto.obtenerPeriodoAgrupacion(periodo)
+
+        if (!acc[periodoAgrupacion]) {
+            acc[periodoAgrupacion] = 0;
+        }
+        
+        acc[periodoAgrupacion] += gasto.valor;
+
+        return acc;
+    }, {}) 
+    return gastosAgrupados;
 }
 
 // NO MODIFICAR A PARTIR DE AQUÍ: exportación de funciones y objetos creados para poder ejecutar los tests.
