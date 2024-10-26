@@ -123,7 +123,6 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
                 break;
         }
         return periodo;
-        
     }
 }
 
@@ -160,8 +159,10 @@ function calcularBalance() {
     return balance;
 }
 
-function filtrarGastos() {
-
+function filtrarGastos(gasto) {
+    if(Object.keys(gasto).length === 0) {
+        return gastos;
+    }
 }
 
 function agruparGastos() {
