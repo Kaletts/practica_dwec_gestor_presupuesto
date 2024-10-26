@@ -168,14 +168,19 @@ function filtrarGastos(gasto) {
     if (gasto.fechaDesde) {
         let fechaDesde = Date.parse(gasto.fechaDesde)
         resultados = resultados.filter(g => g.fecha >= fechaDesde)
-        return resultados;
     }
-    
     if (gasto.fechaHasta) {
         let fechaHasta = Date.parse(gasto.fechaHasta)
-        resultados = resultados.filter(g => g.fecha <= fechaHasta)
-        return resultados;
+        resultados = resultados.filter(g => g.fecha <= fechaHasta) 
     }
+    if(gasto.valorMinimo) {
+        resultados = resultados.filter(g => g.valor >= gasto.valorMinimo)
+    }
+    if(gasto.valorMaximo) {
+        resultados = resultados.filter(g => g.valor <= gasto.valorMaximo)
+    }
+
+    return resultados;
 }
 
 function agruparGastos() {
