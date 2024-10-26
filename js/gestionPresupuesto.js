@@ -21,13 +21,13 @@ function mostrarPresupuesto() {
 }
 
 function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
+    //Verifica que el importe-valor sea valido
     if (valor < 0 || isNaN(valor)) {
         this.valor = 0;
     } else {
         this.valor = valor;
     }
     this.descripcion = descripcion;
-
     this.etiquetas = [];
 
     //Para la verificación de la fecha lei en MDM web docs que si el valor de Date.parse falla se devuelve NaN
@@ -36,7 +36,7 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     } else {
         this.fecha = new Date(fecha).getTime();
     }
-    
+
     this.mostrarGasto = function () {
         return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`
     }
@@ -85,7 +85,7 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     if (!etiquetas || etiquetas.length === 0) {
         this.etiquetas = [];
     } else {
-       this.anyadirEtiquetas(...etiquetas);
+        this.anyadirEtiquetas(...etiquetas);
     }
 
     this.borrarEtiquetas = function (...etiquetasBorrar) {
@@ -94,12 +94,34 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
             let index = this.etiquetas.indexOf(element);
 
             //Si es diferente a -1 quiere decir que existe y hay que eliminarlo
-            if(index > -1) {
+            if (index > -1) {
                 this.etiquetas.splice(index, 1)
             } else {
                 console.log(`No existe el ${element} en las etiquetas del gasto`);
             }
         });
+    }
+
+    this.obtenerPeriodoAgrupacion = function (pAgrupacion) {
+        let periodo;
+        let nuevaFecha = new Date(this.fecha)
+        switch (pAgrupacion) {
+            case "anyo":
+                periodo = new Date(this.fecha).getFullYear()
+                break;
+            case "mes":
+                let mes = String(nuevaFecha.getMonth() + 1).padStart(2,"0")
+                periodo = `${nuevaFecha.getFullYear()}-${mes}`
+                break
+            case "dia":
+                periodo = new Date(this.fecha).getDay()
+                break
+            default:
+                console.log("El periodo ingresado es incorrecto")
+                break;
+        }
+        return periodo;
+        
     }
 }
 
@@ -136,6 +158,14 @@ function calcularBalance() {
     return balance;
 }
 
+function filtrarGastos() {
+
+}
+
+function agruparGastos() {
+
+}
+
 // NO MODIFICAR A PARTIR DE AQUÍ: exportación de funciones y objetos creados para poder ejecutar los tests.
 // Las funciones y objetos deben tener los nombres que se indican en el enunciado
 // Si al obtener el código de una práctica se genera un conflicto, por favor incluye todo el código que aparece aquí debajo
@@ -147,5 +177,7 @@ export {
     anyadirGasto,
     borrarGasto,
     calcularTotalGastos,
-    calcularBalance
+    calcularBalance,
+    filtrarGastos,
+    agruparGastos
 }
