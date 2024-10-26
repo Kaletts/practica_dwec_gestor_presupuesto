@@ -28,19 +28,15 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     }
     this.descripcion = descripcion;
 
+    this.etiquetas = [];
+
     //Para la verificación de la fecha lei en MDM web docs que si el valor de Date.parse falla se devuelve NaN
     if (!fecha || isNaN(Date.parse(fecha))) {
         this.fecha = Date.now();
     } else {
         this.fecha = new Date(fecha).getTime();
     }
-    //Verifica que la etiqueta no este vacia
-    if (!etiquetas || etiquetas.length === 0) {
-        this.etiquetas = [];
-    } else {
-        this.etiquetas = etiquetas;
-    }
-
+    
     this.mostrarGasto = function () {
         return `Gasto correspondiente a ${this.descripcion} con valor ${this.valor} €`
     }
@@ -83,6 +79,13 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
                 console.log(`Etiqueta "${element}" añadida.`);
             }
         });
+    }
+
+    //Verifica que la etiqueta no este vacia
+    if (!etiquetas || etiquetas.length === 0) {
+        this.etiquetas = [];
+    } else {
+       this.anyadirEtiquetas(...etiquetas);
     }
 
     this.borrarEtiquetas = function (...etiquetasBorrar) {
