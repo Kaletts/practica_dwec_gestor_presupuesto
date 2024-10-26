@@ -163,6 +163,19 @@ function filtrarGastos(gasto) {
     if(Object.keys(gasto).length === 0) {
         return gastos;
     }
+
+    let resultados = gastos;
+    if (gasto.fechaDesde) {
+        let fechaDesde = Date.parse(gasto.fechaDesde)
+        resultados = resultados.filter(g => g.fecha >= fechaDesde)
+        return resultados;
+    }
+    
+    if (gasto.fechaHasta) {
+        let fechaHasta = Date.parse(gasto.fechaHasta)
+        resultados = resultados.filter(g => g.fecha <= fechaHasta)
+        return resultados;
+    }
 }
 
 function agruparGastos() {
