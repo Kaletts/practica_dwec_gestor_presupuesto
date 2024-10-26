@@ -179,6 +179,9 @@ function filtrarGastos(gasto) {
     if(gasto.valorMaximo) {
         resultados = resultados.filter(g => g.valor <= gasto.valorMaximo)
     }
+    if(gasto.descripcionContiene) {
+        resultados = resultados.filter(g => g.descripcion.includes(gasto.descripcionContiene))
+    }
 
     return resultados;
 }
