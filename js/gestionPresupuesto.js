@@ -180,7 +180,29 @@ function filtrarGastos(gasto) {
         resultados = resultados.filter(g => g.valor <= gasto.valorMaximo)
     }
     if(gasto.descripcionContiene) {
-        resultados = resultados.filter(g => g.descripcion.includes(gasto.descripcionContiene))
+        let descripcionMinus = gasto.descripcionContiene.toLowerCase();
+        resultados = resultados.filter(g => g.descripcion.toLowerCase().includes(descripcionMinus))
+    }
+    if(gasto.etiquetasTiene) {
+        //Paso a minusculas todas las etiquetas usando map y lowecase
+        let etiquetasMinus = gasto.etiquetasTiene.map(etiqueta => etiqueta.toLowerCase());
+
+        //Filtro resultados
+        resultados = resultados.filter(g => {
+            //Variable de control para devolver a filter un OK de cada verificación
+            let tieneEtiqueta = false;
+
+            //Por cada etiqueta de cada Gasto
+            for(let etiqueta of g.etiquetas) {
+                //Verifico si se incluye la etiqueta y si es asi, paso a true la variable y hago un break del for
+                if (etiquetasMinus.includes(etiqueta.toLowerCase())) {
+                    tieneEtiqueta = true
+                    break
+                }
+            }
+            //Se le devuelve al filter el OK para que separe este gasto
+            return tieneEtiqueta
+        })
     }
 
     return resultados;
