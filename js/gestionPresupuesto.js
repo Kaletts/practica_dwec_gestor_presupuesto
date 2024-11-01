@@ -209,21 +209,27 @@ function filtrarGastos(gasto) {
     return resultados;
 }
 
+//Devuelve el objeto gastosAgrupados, que contiene el total de gastos agrupados por el período especificado (mes, año, etc.)
+//donde cada clave representa un período y cada valor representa el total de gastos de ese período.
 function agruparGastos(periodo = "mes", etiqueta = [], fechaDesde, fechaHasta) {
+    //Filtro los gastos usando los 4 parametros y la funcion filtrarGastos
     let gastosFiltrados = filtrarGastos({
         etiquetasTiene : etiqueta.length > 0 ? etiqueta : undefined,
         fechaDesde : fechaDesde,
         fechaHasta : fechaHasta
     });
 
+    //Uso estos gastos filtrados para la funcion reduce
     let gastosAgrupados = gastosFiltrados.reduce(function (acc, gasto) {
         
         let periodoAgrupacion = gasto.obtenerPeriodoAgrupacion(periodo)
-
+        //Esto verifica si ya existe el periodo de agrupación en el acumulador
         if (!acc[periodoAgrupacion]) {
+            //Si no existe lo inicializa con valor 0 para poder empezar a sumar valores de los gastos del periodo
             acc[periodoAgrupacion] = 0;
         }
         
+        //Suma el gasto actual al total acumulado por el periodo de agrupación
         acc[periodoAgrupacion] += gasto.valor;
 
         return acc;
