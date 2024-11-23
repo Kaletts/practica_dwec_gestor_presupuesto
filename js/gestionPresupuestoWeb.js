@@ -53,28 +53,28 @@ function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo) {
     //Estructura HTML - Creacion de elementos
     let divAgrupacion = document.createElement("div")
     let h1 = document.createElement("h1")
-    let divAgrupacionDato = document.createElement("div")
 
     h1.innerText = `Gastos agrupados por ${periodo}`
 
-    //for of para ver cada clave y luego valor de agrup
-    for (const nombre of Object.keys(agrup)) {
+    //Version anterior no funcionaba porque tenia dos for separados y entonces creaba un unico divAgrupacionDato
+    for (const [clave, valor] of Object.entries(agrup)) {
+        let divAgrupacionDato = document.createElement("div")
         let spanClave = document.createElement("span")
-        spanClave.innerText = `${nombre}`
-        spanClave.className = "agrupacion-dato-clave"
-        divAgrupacionDato.append(spanClave)
-    }
-
-    for (const valor of Object.values(agrup)) {
         let spanValor = document.createElement("span")
-        spanValor.innerText = `${valor}`
+
+        divAgrupacionDato.className = "agrupacion-dato"
+        spanClave.className = "agrupacion-dato-clave"
         spanValor.className = "agrupacion-dato-valor"
-        divAgrupacionDato.append(spanValor)
+
+        spanClave.innerText = clave;
+        spanValor.innerText = valor;
+
+        divAgrupacionDato.append(spanClave);
+        divAgrupacionDato.append(spanValor);
+        divAgrupacion.append(divAgrupacionDato);
     }
 
-    //Clases para el resto de elementos
     divAgrupacion.className = "agrupacion"
-    divAgrupacionDato.className = "agrupacion-dato"
 
     divAgrupacion.append(h1)
     divAgrupacion.append(divAgrupacionDato)
