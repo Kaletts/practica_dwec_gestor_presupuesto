@@ -1,8 +1,12 @@
 import * as gesPres from "./gestionPresupuesto.js"
 
-//Handler para los botones
+//Identifico los botones
 let bt_actualizarPresupuesto = document.getElementById("actualizarpresupuesto")
-bt_actualizarPresupuesto.addEventListener("click",actualizarPresupuestoWeb())
+let bt_anyadirGasto = document.getElementById("anyadirgasto")
+
+//Handlers de eventos
+bt_actualizarPresupuesto.addEventListener("click", actualizarPresupuestoWeb)
+bt_anyadirGasto.addEventListener("click", nuevoGastoWeb)
 
 //Función de dos parámetros que se encargará de escribir el valor (texto) en el elemento HTML con id idElemento indicado:
 function mostrarDatoEnId(idElemento, valor) {
@@ -48,7 +52,7 @@ function mostrarGastoWeb(idElemento, gasto) {
     } else {
         console.error("Etiquetas no es un array es: ", gasto.etiquetas);
     }
-    
+
     //Orden de appends
     div.append(divDescripcion)
     div.append(divFecha)
@@ -107,11 +111,32 @@ function repintar() {
 
 function actualizarPresupuestoWeb() {
     let respuesta = prompt("Introduce un nuevo presupuesto", 1500)
-    if(respuesta === null || respuesta === NaN) {
+    if (respuesta === null || respuesta === NaN) {
         respuesta = 1500
+    } else {
+        gesPres.actualizarPresupuesto(parseFloat(respuesta))
+        repintar()
     }
-    gesPres.actualizarPresupuesto(parseFloat(respuesta))
+}
+
+function nuevoGastoWeb() {
+    let descripcion = prompt("Introduce la descripción del gasto", "Gasto generico")
+    let valor = prompt("Introduce el importe del gasto", 15)
+    let fecha = prompt("Introduce la fecha del gasto", "2024-05-10")
+    let etiquetas = prompt("Introduce las etiquetas separadas por , por favor:", "Seguro,Coche")
+    if (valor === null || valor === NaN) {
+        alert("Introduce un número por favor")
+    }
+    let importe = parseFloat(valor)
+
+    let etiquetasArray = etiquetas.split(",")
+    let gasto = new gesPres.CrearGasto(descripcion, importe, fecha, etiquetasArray)
+    gesPres.anyadirGasto(gasto)
     repintar()
+}
+
+function EditarHandle() {
+    
 }
 
 
