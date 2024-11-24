@@ -106,7 +106,12 @@ function repintar() {
 }
 
 function actualizarPresupuestoWeb() {
-    
+    let respuesta = prompt("Introduce un nuevo presupuesto", 1500)
+    if(respuesta === null || respuesta === NaN) {
+        respuesta = 1500
+    }
+    gesPres.actualizarPresupuesto(parseFloat(respuesta))
+    repintar()
 }
 
 
