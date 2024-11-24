@@ -29,6 +29,12 @@ function mostrarGastoWeb(idElemento, gasto) {
     let divFecha = document.createElement("div");
     let divValor = document.createElement("div");
     let divEtiquetas = document.createElement("div");
+    let botonEditar = document.createElement("button");
+    let botonEliminar = document.createElement("button");
+
+    //Textos fijos
+    botonEditar.innerText = "Editar"
+    botonEliminar.innerText = "Eliminar"
 
     //Clases para los elementos
     div.className = "gasto"
@@ -36,6 +42,8 @@ function mostrarGastoWeb(idElemento, gasto) {
     divFecha.className = "gasto-fecha"
     divValor.className = "gasto-valor"
     divEtiquetas.className = "gasto-etiquetas"
+    botonEliminar.className = "gasto-borrar"
+    botonEditar.className = "gasto-editar"
 
     //Carga de datos sobre los elementos
     divDescripcion.innerText = `${gasto.descripcion}`
@@ -53,14 +61,26 @@ function mostrarGastoWeb(idElemento, gasto) {
         console.error("Etiquetas no es un array es: ", gasto.etiquetas);
     }
 
+    //Crear objeto handler nuevo para editar
+    let manejadorEditar = new EditarHandle(gasto);
+    let manejadorBorrar = new BorrarHandle(gasto);
+
+    botonEditar.addEventListener("click", manejadorEditar);
+    botonEliminar.addEventListener("click", manejadorBorrar);
+
+
+    let BorrarEtiqueta = new BorrarEtiquetasHandle(gasto, gasto.etiqueta)
+
     //Orden de appends
-    div.append(divDescripcion)
-    div.append(divFecha)
-    div.append(divValor)
-    div.append(divEtiquetas)
+    div.appendChild(divDescripcion)
+    div.appendChild(divFecha)
+    div.appendChild(divValor)
+    div.appendChild(divEtiquetas)
+    div.appendChild(botonEditar)
+    div.appendChild(botonEliminar)
 
     //Finalmente se agrega al elemento con la id del parametro
-    elemento.append(div)
+    elemento.appendChild(div)
 }
 
 function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo) {
@@ -107,7 +127,7 @@ function repintar() {
     mostrarDatoEnId("balance-total", gesPres.calcularBalance())
     limpiarListado()
     for (const gasto of gesPres.listarGastos()) {
-        mostrarGastoWeb("listado-gastos-completo", gasto)    
+        mostrarGastoWeb("listado-gastos-completo", gasto)
     }
 }
 
@@ -122,23 +142,59 @@ function actualizarPresupuestoWeb() {
 }
 
 function nuevoGastoWeb() {
+    gesPres.anyadirGasto(recogeDatosGastos())
+    repintar()
+}
+
+function EditarHandle(gasto) {
+    this.gasto = gasto
+
+    this.handleEvent = function (evento) {
+       let gastoEditado = recogeDatosGastos()
+       this.gasto.actualizarValor(gastoEditado.valor)
+       this.gasto.actualizarDescripcion(gastoEditado.descripcion)
+       this.gasto.actualizarFecha(gastoEditado.fecha)
+       this.gasto.anyadirEtiquetas(gastoEditado.etiquetas)
+       repintar()
+    }
+}
+
+function BorrarHandle(gasto) {
+    this.gasto = gasto
+
+    this.handleEvent = function (evento) {
+        this.gasto.borrarGasto(this.gasto.id)
+        repintar()
+    }
+}
+
+function BorrarEtiquetasHandle(gasto, etiqueta) {
+    this.gasto = gasto
+    this.etiqueta = etiqueta
+
+    this.handleEvent = function (evento) {
+        this.gasto.borrarEtiquetas(this.etiqueta);
+
+        // Actualizar la interfaz gráfica
+        repintar();
+    }
+}
+
+//Funcion auxiliar que crea el objeto gasto con todos los prompts para no repetir en editarhandle y en nuevo gasto
+function recogeDatosGastos() {
     let descripcion = prompt("Introduce la descripción del gasto", "Gasto generico")
     let valor = prompt("Introduce el importe del gasto", 15)
     let fecha = prompt("Introduce la fecha del gasto", "2024-05-10")
     let etiquetas = prompt("Introduce las etiquetas separadas por , por favor:", "Seguro,Coche")
     if (valor === null || isNaN(valor)) {
         alert("Introduce un número por favor")
+        return
     }
     let importe = parseFloat(valor)
 
     let etiquetasArray = etiquetas.split(",")
     let gasto = new gesPres.CrearGasto(descripcion, importe, fecha, ...etiquetasArray)
-    gesPres.anyadirGasto(gasto)
-    repintar()
-}
-
-function EditarHandle() {
-
+    return gasto
 }
 
 
