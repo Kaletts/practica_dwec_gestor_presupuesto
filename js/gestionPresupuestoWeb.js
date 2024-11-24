@@ -9,6 +9,11 @@ function mostrarDatoEnId(idElemento, valor) {
 
 //Función de dos parámetros que se encargará de añadir dentro del elemento HTML con id idElemento indicado una estructura HTML para el gasto que se pase como parámetro:
 function mostrarGastoWeb(idElemento, gasto) {
+
+    if (!gasto || typeof gasto !== "object") {
+        console.error("El parámetro gasto no es válido:", gasto);
+        return;
+    }
     let elemento = document.getElementById(idElemento);
 
     //Estructura HTML - Creacion de elementos
@@ -30,13 +35,17 @@ function mostrarGastoWeb(idElemento, gasto) {
     divFecha.innerText = `${gasto.fecha}`
     divValor.innerText = `${gasto.valor}`
     //Para las etiquetas es necesario hacer un for of para pasar por todas
-    for (const etiqueta of gasto.etiquetas) {
-        let span = document.createElement("span");
-        span.innerText = `${etiqueta}`;
-        span.className = "gasto-etiquetas-etiqueta";
-        divEtiquetas.append(span);
+    if (Array.isArray(gasto.etiquetas)) {
+        for (const etiqueta of gasto.etiquetas) {
+            let span = document.createElement("span");
+            span.innerText = `${etiqueta}`;
+            span.className = "gasto-etiquetas-etiqueta";
+            divEtiquetas.append(span);
+        }
+    } else {
+        console.error("Etiquetas no es un array es: ", gasto.etiquetas);
     }
-
+    
     //Orden de appends
     div.append(divDescripcion)
     div.append(divFecha)
@@ -77,14 +86,12 @@ function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo) {
     divAgrupacion.className = "agrupacion"
 
     divAgrupacion.append(h1)
-    divAgrupacion.append(divAgrupacionDato)
-
     elemento.append(divAgrupacion)
 }
 
 
 export {
-    mostrarDatoEnID,
+    mostrarDatoEnId,
     mostrarGastoWeb,
     mostrarGastosAgrupadosWeb
 }
