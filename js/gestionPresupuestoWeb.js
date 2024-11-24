@@ -1,5 +1,8 @@
-//Este fichero contendrá las utilidades necesarias para mostrar los datos de la aplicación en la página interaccionHTML.html
+import * as gesPres from "./gestionPresupuesto.js"
 
+//Handler para los botones
+let bt_actualizarPresupuesto = document.getElementById("actualizarpresupuesto")
+bt_actualizarPresupuesto.addEventListener("click",actualizarPresupuestoWeb())
 
 //Función de dos parámetros que se encargará de escribir el valor (texto) en el elemento HTML con id idElemento indicado:
 function mostrarDatoEnId(idElemento, valor) {
@@ -87,6 +90,23 @@ function mostrarGastosAgrupadosWeb(idElemento, agrup, periodo) {
 
     divAgrupacion.append(h1)
     elemento.append(divAgrupacion)
+}
+
+function limpiarListado() {
+    let lista = document.getElementById("listado-gastos-completo")
+    lista.innerText = ""
+}
+
+function repintar() {
+    mostrarDatoEnId("presupuesto", gesPres.mostrarPresupuesto())
+    mostrarDatoEnId("gastos-totales", gesPres.calcularTotalGastos())
+    mostrarDatoEnId("balance-total", gesPres.calcularBalance())
+    limpiarListado()
+    mostrarGastoWeb("listado-gastos-completo", gesPres.listarGastos())
+}
+
+function actualizarPresupuestoWeb() {
+    
 }
 
 
