@@ -55,7 +55,12 @@ function mostrarGastoWeb(idElemento, gasto) {
             let span = document.createElement("span");
             span.innerText = `${etiqueta}`;
             span.className = "gasto-etiquetas-etiqueta";
-            divEtiquetas.append(span);
+
+            //Manejador de los eventos sobre la etiqueta
+            let manejadorEtiqueta = new BorrarEtiquetasHandle(gasto, etiqueta)
+            span.addEventListener("click", manejadorEtiqueta)
+
+            divEtiquetas.appendChild(span);
         }
     } else {
         console.error("Etiquetas no es un array es: ", gasto.etiquetas);
@@ -174,8 +179,6 @@ function BorrarEtiquetasHandle(gasto, etiqueta) {
 
     this.handleEvent = function (evento) {
         this.gasto.borrarEtiquetas(this.etiqueta);
-
-        // Actualizar la interfaz gráfica
         repintar();
     }
 }
