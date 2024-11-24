@@ -168,7 +168,7 @@ function BorrarHandle(gasto) {
     this.gasto = gasto
 
     this.handleEvent = function (evento) {
-        this.gasto.borrarGasto(this.gasto.id)
+        gesPres.borrarGasto(this.gasto.id)
         repintar()
     }
 }
