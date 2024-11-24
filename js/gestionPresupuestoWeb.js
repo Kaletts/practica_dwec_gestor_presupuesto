@@ -106,7 +106,9 @@ function repintar() {
     mostrarDatoEnId("gastos-totales", gesPres.calcularTotalGastos())
     mostrarDatoEnId("balance-total", gesPres.calcularBalance())
     limpiarListado()
-    mostrarGastoWeb("listado-gastos-completo", gesPres.listarGastos())
+    for (const gasto of gesPres.listarGastos()) {
+        mostrarGastoWeb("listado-gastos-completo", gasto)    
+    }
 }
 
 function actualizarPresupuestoWeb() {
@@ -124,19 +126,19 @@ function nuevoGastoWeb() {
     let valor = prompt("Introduce el importe del gasto", 15)
     let fecha = prompt("Introduce la fecha del gasto", "2024-05-10")
     let etiquetas = prompt("Introduce las etiquetas separadas por , por favor:", "Seguro,Coche")
-    if (valor === null || valor === NaN) {
+    if (valor === null || isNaN(valor)) {
         alert("Introduce un número por favor")
     }
     let importe = parseFloat(valor)
 
     let etiquetasArray = etiquetas.split(",")
-    let gasto = new gesPres.CrearGasto(descripcion, importe, fecha, etiquetasArray)
+    let gasto = new gesPres.CrearGasto(descripcion, importe, fecha, ...etiquetasArray)
     gesPres.anyadirGasto(gasto)
     repintar()
 }
 
 function EditarHandle() {
-    
+
 }
 
 
