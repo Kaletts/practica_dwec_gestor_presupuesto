@@ -156,19 +156,55 @@ function nuevoGastoWeb() {
 
 //Funcion que recoge los datos con un formulario
 function nuevoGastoWebFormulario() {
-    
+    //Guardo en una variable el template que esta en el HTML
+    let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
+    //Se accede con selectores como si fuera un HTML más.
+    let formulario = plantillaFormulario.querySelector("form");
+
+    let botonAnyadir = document.getElementById("anyadirgasto-formulario");
+    botonAnyadir.setAttribute("disabled", "true");
+
+    //Codigo para ejecutar cuando se hace el submit del formulario - Funcion manejadora que omite el submit
+    formulario.addEventListener("submit", function (event) {
+        event.preventDefault();
+       
+        //Tomo los valores del formulario
+        let descripcion = formulario.elements.descripcion.value;
+        let valor = formulario.elements.valor.value;
+        let fecha = formulario.elements.fecha.value;
+        let etiquetas = formulario.elements.etiquetas.value;
+
+        /* if(!descripcion || isNaN(valor) || !fecha) {
+            alert("Datós invalidos, por favor verifica los valores")
+        } */
+
+        //Creo el array de etiquetas
+        let etiquetasArray = etiquetas.split(",")
+
+        let gasto = new gesPres.CrearGasto(descripcion, valor, fecha, etiquetasArray);
+        gesPres.anyadirGasto(gasto);
+        
+        //Reactivo el boton, elimino el formulario y repinto.
+        botonAnyadir.removeAttribute("disable")
+        formulario.remove()
+        repintar();
+
+    })
+    let controles = document.getElementById("controlesprincipales");
+    controles.append(plantillaFormulario)
+
 }
 
 function EditarHandle(gasto) {
     this.gasto = gasto
 
     this.handleEvent = function (evento) {
-       let gastoEditado = recogeDatosGastos()
-       this.gasto.actualizarValor(gastoEditado.valor)
-       this.gasto.actualizarDescripcion(gastoEditado.descripcion)
-       this.gasto.actualizarFecha(gastoEditado.fecha)
-       this.gasto.anyadirEtiquetas(gastoEditado.etiquetas)
-       repintar()
+        let gastoEditado = recogeDatosGastos()
+        this.gasto.actualizarValor(gastoEditado.valor)
+        this.gasto.actualizarDescripcion(gastoEditado.descripcion)
+        this.gasto.actualizarFecha(gastoEditado.fecha)
+        this.gasto.anyadirEtiquetas(gastoEditado.etiquetas)
+        repintar()
     }
 }
 
