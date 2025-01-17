@@ -3,10 +3,12 @@ import * as gesPres from "./gestionPresupuesto.js"
 //Identifico los botones
 let bt_actualizarPresupuesto = document.getElementById("actualizarpresupuesto")
 let bt_anyadirGasto = document.getElementById("anyadirgasto")
+let bt_anyadirGastoForm = document.getElementById("anyadirgasto-formulario")
 
 //Handlers de eventos
 bt_actualizarPresupuesto.addEventListener("click", actualizarPresupuestoWeb)
 bt_anyadirGasto.addEventListener("click", nuevoGastoWeb)
+bt_anyadirGastoForm.addEventListener("click", nuevoGastoWebFormulario)
 
 //Función de dos parámetros que se encargará de escribir el valor (texto) en el elemento HTML con id idElemento indicado:
 function mostrarDatoEnId(idElemento, valor) {
@@ -146,9 +148,15 @@ function actualizarPresupuestoWeb() {
     }
 }
 
+//Funcion que recoge los datos con promts
 function nuevoGastoWeb() {
     gesPres.anyadirGasto(recogeDatosGastos())
     repintar()
+}
+
+//Funcion que recoge los datos con un formulario
+function nuevoGastoWebFormulario() {
+    
 }
 
 function EditarHandle(gasto) {
@@ -199,6 +207,8 @@ function recogeDatosGastos() {
     let gasto = new gesPres.CrearGasto(descripcion, importe, fecha, ...etiquetasArray)
     return gasto
 }
+
+
 
 
 export {

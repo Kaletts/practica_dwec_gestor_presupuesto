@@ -1,62 +1,89 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>
-      <!-- TODO --> Gestor de Presupuesto - Pon aquí tu nombre y apellidos
-    </title>
-  </head>
 
-  <body>
-    <div id="aplicacion">
-      <div id="controlesprincipales">
-        <button type="button" id="actualizarpresupuesto">
-          Actualizar presupuesto
-        </button>
-        <button type="button" id="anyadirgasto">
-          Añadir gasto
-        </button>
-      </div>
-      <h2>Totales</h2>
-      <div id="presupuesto"></div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>
+    <!-- TODO --> Gestor de Presupuesto - Pon aquí tu nombre y apellidos
+  </title>
+</head>
 
-      <div id="gastos-totales"></div>
-
-      <div id="balance-total"></div>
-
-      <h2>Listado de gastos completo</h2>
-      <div id="listado-gastos-completo"></div>
-
-      <h2>Listado de gastos filtrados - 1</h2>
-      <div id="listado-gastos-filtrado-1"></div>
-
-      <h2>Listado de gastos filtrados - 2</h2>
-      <div id="listado-gastos-filtrado-2"></div>
-
-      <h2>Listado de gastos filtrados - 3</h2>
-      <div id="listado-gastos-filtrado-3"></div>
-
-      <h2>Listado de gastos filtrados - 4</h2>
-      <div id="listado-gastos-filtrado-4"></div>
-
-      <h2>Gastos agrupados por día</h2>
-      <div id="agrupacion-dia"></div>
-
-      <h2>Gastos agrupados por mes</h2>
-      <div id="agrupacion-mes"></div>
-
-      <h2>Gastos agrupados por año</h2>
-      <div id="agrupacion-anyo"></div>
+<body>
+  <div id="aplicacion">
+    <div id="controlesprincipales">
+      <button type="button" id="actualizarpresupuesto">
+        Actualizar presupuesto
+      </button>
+      <button type="button" id="anyadirgasto">
+        Añadir gasto
+      </button>
+      <button type="button" id="anyadirgasto-formulario"> <!-- Este segundo botón activará la lógica para crear un gasto a través de un formulario -->
+        Añadir gasto (formulario)
+      </button>
     </div>
+    <h2>Totales</h2>
+    <div id="presupuesto"></div>
 
-    <script type="module" src="./js/generarDatosEstaticos.js"></script>
-    <!--
+    <div id="gastos-totales"></div>
+
+    <div id="balance-total"></div>
+
+    <h2>Listado de gastos completo</h2>
+    <div id="listado-gastos-completo"></div>
+
+    <h2>Listado de gastos filtrados - 1</h2>
+    <div id="listado-gastos-filtrado-1"></div>
+
+    <h2>Listado de gastos filtrados - 2</h2>
+    <div id="listado-gastos-filtrado-2"></div>
+
+    <h2>Listado de gastos filtrados - 3</h2>
+    <div id="listado-gastos-filtrado-3"></div>
+
+    <h2>Listado de gastos filtrados - 4</h2>
+    <div id="listado-gastos-filtrado-4"></div>
+
+    <h2>Gastos agrupados por día</h2>
+    <div id="agrupacion-dia"></div>
+
+    <h2>Gastos agrupados por mes</h2>
+    <div id="agrupacion-mes"></div>
+
+    <h2>Gastos agrupados por año</h2>
+    <div id="agrupacion-anyo"></div>
+  </div>
+
+  <script type="module" src="./js/generarDatosEstaticos.js"></script>
+  <!--
              TODO: Cargar el script js/generarDatosEstaticos.js
 
              Cargar script al final para que se haya cargado todo el HTML previo.
              El script se debe cargar con el atributo type="module" porque vamos a utilizar "import"
              https://es.javascript.info/modules-intro#que-es-un-modulo
         -->
-  </body>
+        <template id="formulario-template">
+          <form>
+              <div class="form-control">
+                  <label for="descripcion">Descripción</label>
+                  <input type="text" name="descripcion" id="descripcion">
+              </div>
+              <div class="form-control">
+                  <label for="valor">Valor</label>
+                  <input type="number" step="0.01" name="valor" id="valor">
+              </div>
+              <div class="form-control">
+                  <label for="fecha">Fecha</label>
+                  <input type="date" name="fecha" id="fecha">
+              </div>
+              <div class="form-control">
+                  <label for="etiquetas">Etiquetas</label>
+                  <input type="text" name="etiquetas" id="etiquetas">
+              </div>
+              <button type="submit">Enviar</button>
+              <button class="cancelar" type="button">Cancelar</button>
+          </form>
+      </template>
+</body>
+
 </html>
