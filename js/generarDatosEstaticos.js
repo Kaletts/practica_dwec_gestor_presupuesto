@@ -20,7 +20,12 @@ gesPresupuesto.anyadirGasto(gasto4);
 gesPresupuesto.anyadirGasto(gasto5);
 gesPresupuesto.anyadirGasto(gasto6);
 
-gesPresupuestoWeb.mostrarDatoEnId("gastos-totales", gesPresupuesto.calcularTotalGastos());
+let importeFormato = gesPresupuesto.calcularTotalGastos().toLocaleString('es-ES', {
+        style: 'currency',
+        currency: 'EUR',
+    });
+
+gesPresupuestoWeb.mostrarDatoEnId("gastos-totales", importeFormato);
 gesPresupuestoWeb.mostrarDatoEnId("balance-total", gesPresupuesto.calcularBalance());
 
 for(let gasto of gesPresupuesto.listarGastos()){

@@ -141,7 +141,11 @@ function limpiarListado() {
 
 function repintar() {
     mostrarDatoEnId("presupuesto", gesPres.mostrarPresupuesto())
-    mostrarDatoEnId("gastos-totales", gesPres.calcularTotalGastos())
+    let importeFormato = gesPres.calcularTotalGastos().toLocaleString('es-ES', {
+        style: 'currency',
+        currency: 'EUR',
+    });
+    mostrarDatoEnId("gastos-totales", importeFormato)
     mostrarDatoEnId("balance-total", gesPres.calcularBalance())
     limpiarListado()
     for (const gasto of gesPres.listarGastos()) {
@@ -166,7 +170,7 @@ function nuevoGastoWeb() {
 }
 
 //Funcion que recoge los datos con un formulario
-function nuevoGastoWebFormulario(evento) {
+function nuevoGastoWebFormulario() {
     //Guardo en una variable el template que esta en el HTML
     let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
     //Se accede con selectores como si fuera un HTML más.
@@ -182,7 +186,11 @@ function nuevoGastoWebFormulario(evento) {
 
         //Tomo los valores del formulario
         let descripcion = formulario.elements.descripcion.value;
-        let valor = formulario.elements.valor.value;
+
+        //Verifica y confirma que todo el valor sea correcto para no afectar la logica detras
+        let valorTexto = formulario.elements.valor.value
+        let valorLimpio = valorTexto.replace(/[^0-9.-]+/g, "");
+        let valorNumerico = parseFloat(valorLimpio)
         let fecha = formulario.elements.fecha.value;
         let etiquetas = formulario.elements.etiquetas.value;
 
@@ -193,18 +201,14 @@ function nuevoGastoWebFormulario(evento) {
         //Creo el array de etiquetas
         let etiquetasArray = etiquetas.split(",")
 
-        let gasto = new gesPres.CrearGasto(descripcion, valor, fecha, etiquetasArray);
+        let gasto = new gesPres.CrearGasto(descripcion, valorNumerico, fecha, etiquetasArray);
         gesPres.anyadirGasto(gasto);
-        gesPres.calcularTotalGastos()
         repintar();
 
         //Reactivo el boton, elimino el formulario y repinto.
         botonAnyadir.removeAttribute("disable")
         formulario.remove()
-
     })
-
-    
 
     //Manejador del boton cancelar
     let botonCancelar = formulario.querySelector(".cancelar")
@@ -289,7 +293,7 @@ function SubmitFormularioEditado(gasto) {
 
         //Actualizo los datos con los nuevos del formulario
         this.gasto.descripcion = formulario.elements.descripcion.value
-        
+
         //Verifica y confirma que todo el valor sea correcto para no afectar la logica detras
         let valorTexto = formulario.elements.valor.value
         let valorLimpio = valorTexto.replace(/[^0-9.-]+/g, "");
@@ -297,7 +301,6 @@ function SubmitFormularioEditado(gasto) {
         if (!isNaN(valorNumerico)) {
             this.gasto.valor = valorNumerico;
         } else {
-            // Manejar el caso en que el valor no sea un número válido
             console.error("El valor no es un número válido");
         }
         this.gasto.fecha = formulario.elements.fecha.value
