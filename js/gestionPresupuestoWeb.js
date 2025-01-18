@@ -52,7 +52,12 @@ function mostrarGastoWeb(idElemento, gasto) {
 
     //Carga de datos sobre los elementos
     divDescripcion.innerText = `${gasto.descripcion}`
-    divFecha.innerText = `${gasto.fecha}`
+    divFecha.innerText = gasto.fecha
+        ? new Date(gasto.fecha).toLocaleDateString("es-ES", {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }) : "Fecha no disponible"
     divValor.innerText = `${gasto.valor}`
     //Para las etiquetas es necesario hacer un for of para pasar por todas
     if (Array.isArray(gasto.etiquetas)) {
@@ -89,6 +94,7 @@ function mostrarGastoWeb(idElemento, gasto) {
     div.appendChild(divValor)
     div.appendChild(divEtiquetas)
     div.appendChild(botonEditar)
+    div.appendChild(botonEditarForm)
     div.appendChild(botonEliminar)
 
     //Finalmente se agrega al elemento con la id del parametro
@@ -160,7 +166,7 @@ function nuevoGastoWeb() {
 }
 
 //Funcion que recoge los datos con un formulario
-function nuevoGastoWebFormulario() {
+function nuevoGastoWebFormulario(evento) {
     //Guardo en una variable el template que esta en el HTML
     let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
     //Se accede con selectores como si fuera un HTML más.
@@ -172,6 +178,7 @@ function nuevoGastoWebFormulario() {
     //Codigo para ejecutar cuando se hace el submit del formulario - Funcion manejadora que omite el submit
     formulario.addEventListener("submit", function (event) {
         event.preventDefault();
+        document.getElementById("anyadirgasto-formulario").disabled = false;
 
         //Tomo los valores del formulario
         let descripcion = formulario.elements.descripcion.value;
@@ -188,13 +195,16 @@ function nuevoGastoWebFormulario() {
 
         let gasto = new gesPres.CrearGasto(descripcion, valor, fecha, etiquetasArray);
         gesPres.anyadirGasto(gasto);
+        gesPres.calcularTotalGastos()
+        repintar();
 
         //Reactivo el boton, elimino el formulario y repinto.
         botonAnyadir.removeAttribute("disable")
         formulario.remove()
-        repintar();
 
     })
+
+    
 
     //Manejador del boton cancelar
     let botonCancelar = formulario.querySelector(".cancelar")
@@ -204,12 +214,13 @@ function nuevoGastoWebFormulario() {
     let controles = document.getElementById("controlesprincipales")
     controles.appendChild(plantillaFormulario)
 
+    repintar()
 }
 
 function CancelarHandler() {
     this.handleEvent = function (event) {
         let botonAnyadir = document.getElementById("anyadirgasto-formulario")
-        botonAnyadir.removeAttribute("disable")
+        botonAnyadir.removeAttribute("disabled")
 
         let contenedor = document.getElementById("controlesprincipales");
         let formulario = contenedor.querySelector("form");
@@ -244,36 +255,55 @@ function EditarHandleFormulario(gasto) {
         formulario.elements.fecha.value = this.gasto.fecha;
         formulario.elements.etiquetas.value = this.gasto.etiquetas;
 
+        let botonEditarFormulario = evento.target; //El botón que fue clicado
+        botonEditarFormulario.disabled = true;
+
         //Manejador para el submit
         let submitHandler = new SubmitFormularioEditado(this.gasto)
         formulario.addEventListener("submit", submitHandler)
 
         //Manejador del boton cancelar
-        let botonCancelar = formulario.querySelector(".cancelar");
-        botonCancelar.addEventListener("click", new CancelarHandler());
+        let botonCancel = formulario.querySelector("button.cancelar");
+        botonCancel.addEventListener("click", (evento) => {
+            evento.preventDefault();
+            botonEditarFormulario.disabled = false;
+            formulario.parentElement.removeChild(formulario);
+        });
 
         //Agrego a la pagina el form
-        let controles = document.getElementById("controlesprincipales");
-        controles.appendChild(plantillaFormulario);
+        let contenedorGasto = evento.target.closest(".gasto"); //Encuentra el contenedor del gasto en el que se hizo clic
+        contenedorGasto.appendChild(plantillaFormulario); //Añade el formulario al gasto específico
+
     }
 }
 
 function SubmitFormularioEditado(gasto) {
     this.gasto = gasto
 
-    this.handleEvent = function(evento) {
+    this.handleEvent = function (evento) {
         evento.preventDefault()
 
         //Busco el formulario
-        let contenedor = document.getElementById("controlesprincipales");
-        let formulario = contenedor.querySelector("form");
-        
+        let contenedorGasto = evento.target.closest(".gasto");
+        let formulario = contenedorGasto.querySelector("form");
+
         //Actualizo los datos con los nuevos del formulario
         this.gasto.descripcion = formulario.elements.descripcion.value
-        this.gasto.valor = formulario.elements.valor.value
+        
+        //Verifica y confirma que todo el valor sea correcto para no afectar la logica detras
+        let valorTexto = formulario.elements.valor.value
+        let valorLimpio = valorTexto.replace(/[^0-9.-]+/g, "");
+        let valorNumerico = parseFloat(valorLimpio)
+        if (!isNaN(valorNumerico)) {
+            this.gasto.valor = valorNumerico;
+        } else {
+            // Manejar el caso en que el valor no sea un número válido
+            console.error("El valor no es un número válido");
+        }
         this.gasto.fecha = formulario.elements.fecha.value
         this.gasto.etiquetas = formulario.elements.etiquetas.value.split(",")
 
+        gesPres.calcularTotalGastos()
         repintar()
 
         formulario.remove()
