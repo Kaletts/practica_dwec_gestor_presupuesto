@@ -105,8 +105,8 @@ function CrearGasto(descripcion, valor, fecha, ...etiquetas) {
     this.obtenerPeriodoAgrupacion = function (pAgrupacion) {
         let periodo;
         let nuevaFecha = new Date(this.fecha)
-        let mes = String(nuevaFecha.getMonth() + 1).padStart(2,"0")
-        let dia = String(nuevaFecha.getDate()).padStart(2,"0")
+        let mes = String(nuevaFecha.getMonth() + 1).padStart(2, "0")
+        let dia = String(nuevaFecha.getDate()).padStart(2, "0")
         let anyo = new Date(this.fecha).getFullYear()
         switch (pAgrupacion) {
             case "anyo":
@@ -160,7 +160,7 @@ function calcularBalance() {
 }
 
 function filtrarGastos(gasto) {
-    if(Object.keys(gasto).length === 0) {
+    if (Object.keys(gasto).length === 0) {
         return gastos;
     }
 
@@ -171,20 +171,20 @@ function filtrarGastos(gasto) {
     }
     if (gasto.fechaHasta) {
         let fechaHasta = Date.parse(gasto.fechaHasta)
-        resultados = resultados.filter(g => g.fecha <= fechaHasta) 
+        resultados = resultados.filter(g => g.fecha <= fechaHasta)
     }
-    if(gasto.valorMinimo) {
+    if (gasto.valorMinimo) {
         resultados = resultados.filter(g => g.valor >= gasto.valorMinimo)
     }
-    if(gasto.valorMaximo) {
+    if (gasto.valorMaximo) {
         resultados = resultados.filter(g => g.valor <= gasto.valorMaximo)
     }
-    if(gasto.descripcionContiene) {
+    if (gasto.descripcionContiene) {
         let descripcionMinus = gasto.descripcionContiene.toLowerCase();
         resultados = resultados.filter(g => g.descripcion.toLowerCase().includes(descripcionMinus))
     }
     //Me dejo esto explicado porque fue el filtro que más me costó
-    if(gasto.etiquetasTiene) {
+    if (gasto.etiquetasTiene) {
         //Paso a minusculas todas las etiquetas usando map y lowecase
         let etiquetasMinus = gasto.etiquetasTiene.map(etiqueta => etiqueta.toLowerCase());
 
@@ -194,7 +194,7 @@ function filtrarGastos(gasto) {
             let tieneEtiqueta = false;
 
             //Por cada etiqueta de cada Gasto
-            for(let etiqueta of g.etiquetas) {
+            for (let etiqueta of g.etiquetas) {
                 //Verifico si se incluye la etiqueta y si es asi, paso a true la variable y hago un break del for
                 if (etiquetasMinus.includes(etiqueta.toLowerCase())) {
                     tieneEtiqueta = true
@@ -214,27 +214,40 @@ function filtrarGastos(gasto) {
 function agruparGastos(periodo = "mes", etiqueta = [], fechaDesde, fechaHasta) {
     //Filtro los gastos usando los 4 parametros y la funcion filtrarGastos
     let gastosFiltrados = filtrarGastos({
-        etiquetasTiene : etiqueta.length > 0 ? etiqueta : undefined,
-        fechaDesde : fechaDesde,
-        fechaHasta : fechaHasta
+        etiquetasTiene: etiqueta.length > 0 ? etiqueta : undefined,
+        fechaDesde: fechaDesde,
+        fechaHasta: fechaHasta
     });
 
     //Uso estos gastos filtrados para la funcion reduce
     let gastosAgrupados = gastosFiltrados.reduce(function (acc, gasto) {
-        
+
         let periodoAgrupacion = gasto.obtenerPeriodoAgrupacion(periodo)
         //Esto verifica si ya existe el periodo de agrupación en el acumulador
         if (!acc[periodoAgrupacion]) {
             //Si no existe lo inicializa con valor 0 para poder empezar a sumar valores de los gastos del periodo
             acc[periodoAgrupacion] = 0;
         }
-        
+
         //Suma el gasto actual al total acumulado por el periodo de agrupación
         acc[periodoAgrupacion] += gasto.valor;
 
         return acc;
-    }, {}) 
+    }, {})
     return gastosAgrupados;
+}
+
+
+function transformarListadoEtiquetas(etiquetas) {
+
+    let regexp = /[.,;:\s]+/;
+
+    etiquetas.replace(regexp, ",")
+    
+    let etiquetasLimpias = etiquetas.trim();
+    let arrayEtiquetas = etiquetasLimpias.split(",");
+    
+    return arrayEtiquetas;
 }
 
 // NO MODIFICAR A PARTIR DE AQUÍ: exportación de funciones y objetos creados para poder ejecutar los tests.
