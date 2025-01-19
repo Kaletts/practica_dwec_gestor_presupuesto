@@ -220,6 +220,9 @@ function nuevoGastoWebFormulario() {
 
     repintar()
 }
+document.addEventListener("DOMContentLoaded", function () {
+    filtrarGastosWeb();
+});
 
 //Esta función se utilizará como manejadora de eventos del formulario formulario-filtrado. Realizará las siguientes tareas:
 function filtrarGastosWeb() {
@@ -227,6 +230,7 @@ function filtrarGastosWeb() {
 
     formularioFiltrado.addEventListener("submit", function (evento) {
         evento.preventDefault();
+        console.log("El evento submit fue interceptado correctamente.");
 
         let descripcion = formularioFiltrado.elements["formulario-filtrado-descripcion"].value
         let valorMin = formularioFiltrado.elements["formulario-filtrado-valor-minimo"].value
@@ -235,11 +239,9 @@ function filtrarGastosWeb() {
         let fechaFin = formularioFiltrado.elements["formulario-filtrado-fecha-hasta"].value
         let etiquetas = formularioFiltrado.elements["formulario-filtrado-etiquetas-tiene"].value
 
-        if(etiquetas != "") {
-            let etiquetasOrdenadas = gesPres.transformarListadoEtiquetas(etiquetas)
-        } else {
-            etiquetasOrdenadas = []
-        }
+        let etiquetasOrdenadas = etiquetas
+            ? gesPres.transformarListadoEtiquetas(etiquetas)
+            : [];
 
         let gasto = {
             descripcionContiene: descripcion,
@@ -247,11 +249,14 @@ function filtrarGastosWeb() {
             valorMaximo: valorMax,
             fechaDesde: fechaIni,
             fechaHasta: fechaFin,
-            etiquetasTiene: etiquetasOrdenadas
-        }
+            etiquetasTiene: etiquetasOrdenadas || []
+        };
 
-        let filtroGasto = Object.create(gasto)
-        let resultado = gesPres.filtrarGastos(filtroGasto)
+        let resultado = gesPres.filtrarGastos(gasto)
+
+        //Limpiar el listado anterior
+        let listadoGastos = document.getElementById("listado-gastos-completo");
+        listadoGastos.innerHTML = "";
 
         for (const gasto of resultado) {
             mostrarGastoWeb("listado-gastos-completo", gasto)
