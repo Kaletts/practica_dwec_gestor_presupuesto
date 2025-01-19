@@ -240,11 +240,15 @@ function agruparGastos(periodo = "mes", etiqueta = [], fechaDesde, fechaHasta) {
 
 function transformarListadoEtiquetas(etiquetas) {
 
+    //Expresion regular que segun entiendo hace o siguiente:
+    //busca caracteres con . , ; : o cualquier espacio en blanco (la \s)
+    //El más de al lado es para que coincida con uno o más de todos los caracteres consecutivos.
     let regexp = /[.,;:\s]+/;
 
-    etiquetas.replace(regexp, ",")
+    let etiquetasCorregidas = etiquetas.replace(regexp, ",")
     
-    let etiquetasLimpias = etiquetas.trim();
+    let etiquetasLimpias = etiquetasCorregidas.trim();
+    
     let arrayEtiquetas = etiquetasLimpias.split(",");
     
     return arrayEtiquetas;
@@ -263,5 +267,6 @@ export {
     calcularTotalGastos,
     calcularBalance,
     filtrarGastos,
-    agruparGastos
+    agruparGastos,
+    transformarListadoEtiquetas
 }
