@@ -221,6 +221,44 @@ function nuevoGastoWebFormulario() {
     repintar()
 }
 
+//Esta función se utilizará como manejadora de eventos del formulario formulario-filtrado. Realizará las siguientes tareas:
+function filtrarGastosWeb() {
+    let formularioFiltrado = document.getElementById("formulario-filtrado")
+
+    formularioFiltrado.addEventListener("submit", function (evento) {
+        evento.preventDefault();
+
+        let descripcion = formularioFiltrado.elements["formulario-filtrado-descripcion"].value
+        let valorMin = formularioFiltrado.elements["formulario-filtrado-valor-minimo"].value
+        let valorMax = formularioFiltrado.elements["formulario-filtrado-valor-maximo"].value
+        let fechaIni = formularioFiltrado.elements["formulario-filtrado-fecha-desde"].value
+        let fechaFin = formularioFiltrado.elements["formulario-filtrado-fecha-hasta"].value
+        let etiquetas = formularioFiltrado.elements["formulario-filtrado-etiquetas-tiene"].value
+
+        if(etiquetas != "") {
+            let etiquetasOrdenadas = gesPres.transformarListadoEtiquetas(etiquetas)
+        } else {
+            etiquetasOrdenadas = []
+        }
+
+        let gasto = {
+            descripcionContiene: descripcion,
+            valorMinimo: valorMin,
+            valorMaximo: valorMax,
+            fechaDesde: fechaIni,
+            fechaHasta: fechaFin,
+            etiquetasTiene: etiquetasOrdenadas
+        }
+
+        let filtroGasto = Object.create(gasto)
+        let resultado = gesPres.filtrarGastos(filtroGasto)
+
+        for (const gasto of resultado) {
+            mostrarGastoWeb("listado-gastos-completo", gasto)
+        }
+    })
+}
+
 function CancelarHandler() {
     this.handleEvent = function (event) {
         let botonAnyadir = document.getElementById("anyadirgasto-formulario")
