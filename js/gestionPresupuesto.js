@@ -184,26 +184,16 @@ function filtrarGastos(gasto) {
         resultados = resultados.filter(g => g.descripcion.toLowerCase().includes(descripcionMinus))
     }
     //Me dejo esto explicado porque fue el filtro que más me costó
-    if (gasto.etiquetasTiene) {
-        //Paso a minusculas todas las etiquetas usando map y lowecase
+    // Filtro de etiquetas, solo si hay etiquetas especificadas
+    if (gasto.etiquetasTiene && gasto.etiquetasTiene.length > 0) {
+        // Paso a minúsculas todas las etiquetas usando map y toLowerCase
         let etiquetasMinus = gasto.etiquetasTiene.map(etiqueta => etiqueta.toLowerCase());
 
-        //Filtro resultados
+        // Filtro de resultados sin eliminar los anteriores
         resultados = resultados.filter(g => {
-            //Variable de control para devolver a filter un OK de cada verificación
-            let tieneEtiqueta = false;
-
-            //Por cada etiqueta de cada Gasto
-            for (let etiqueta of g.etiquetas) {
-                //Verifico si se incluye la etiqueta y si es asi, paso a true la variable y hago un break del for
-                if (etiquetasMinus.includes(etiqueta.toLowerCase())) {
-                    tieneEtiqueta = true
-                    break
-                }
-            }
-            //Se le devuelve al filter el OK para que separe este gasto
-            return tieneEtiqueta
-        })
+            // Verificamos si alguna de las etiquetas del gasto coincide con las etiquetas que estamos buscando
+            return g.etiquetas.some(etiqueta => etiquetasMinus.includes(etiqueta.toLowerCase()));
+        });
     }
 
     return resultados;
