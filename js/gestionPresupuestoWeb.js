@@ -42,11 +42,13 @@ function mostrarGastoWeb(idElemento, gasto) {
     let botonEditar = document.createElement("button");
     let botonEditarForm = document.createElement("button");
     let botonEliminar = document.createElement("button");
+    let botonEliminarApi = document.createElement("button");
 
     //Textos fijos
     botonEditar.innerText = "Editar"
     botonEditarForm.innerText = "Editar con formulario"
     botonEliminar.innerText = "Eliminar"
+    botonEliminarApi.innerText = "Borrar (API)"
 
     //Clases para los elementos
     div.className = "gasto"
@@ -57,6 +59,7 @@ function mostrarGastoWeb(idElemento, gasto) {
     botonEliminar.className = "gasto-borrar"
     botonEditar.className = "gasto-editar"
     botonEditarForm.className = "gasto-editar-formulario"
+    botonEliminarApi.className = "gasto-borrar-api"
 
     //Carga de datos sobre los elementos
     divDescripcion.innerText = `${gasto.descripcion}`
@@ -88,11 +91,12 @@ function mostrarGastoWeb(idElemento, gasto) {
     let manejadorEditar = new EditarHandle(gasto);
     let manejadorEditarForm = new EditarHandleFormulario(gasto);
     let manejadorBorrar = new BorrarHandle(gasto);
+    let manejadorBorrarApi = new BorrarHandleApi(gasto);
 
     botonEditar.addEventListener("click", manejadorEditar);
     botonEditarForm.addEventListener("click", manejadorEditarForm);
     botonEliminar.addEventListener("click", manejadorBorrar);
-
+    botonEliminarApi.addEventListener("click", manejadorBorrarApi)
 
     let BorrarEtiqueta = new BorrarEtiquetasHandle(gasto, gasto.etiqueta)
 
@@ -104,6 +108,7 @@ function mostrarGastoWeb(idElemento, gasto) {
     div.appendChild(botonEditar)
     div.appendChild(botonEditarForm)
     div.appendChild(botonEliminar)
+    div.appendChild(botonEliminarApi)
 
     //Finalmente se agrega al elemento con la id del parametro
     elemento.appendChild(div)
@@ -383,6 +388,42 @@ function BorrarEtiquetasHandle(gasto, etiqueta) {
     }
 }
 
+//En esta funcion si uso async
+function BorrarHandleApi(gasto) {
+    this.handleEvent = async function(evento) {
+        try {
+            let usuario = document.getElementById("nombre_usuario").value
+    
+            if (!usuario) {
+                console.error("Verifica el usuario!")
+                return
+            }
+    
+            const URL = `https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${usuario}/${gasto.id}`
+            const CONFIG = {
+                method: "DELETE",
+            };
+    
+            const respuesta = await fetch(URL, CONFIG)
+    
+            if (!respuesta.ok) {
+                throw new Error(`Error al eliminar gasto: ${respuesta.statusText}`)
+            }
+    
+            console.log("Gasto eliminado correctamente")
+    
+            //Aqui no sé si debo llamar con await o no a la API
+            await gesPres.cargarGastosApi()
+    
+            repintar()
+        } catch (error) {
+            console.error("Error en BorrarHandleApi:", error)
+        }
+    }
+}
+
+
+
 //Funcion auxiliar que crea el objeto gasto con todos los prompts para no repetir en editarhandle y en nuevo gasto
 function recogeDatosGastos() {
     let descripcion = prompt("Introduce la descripción del gasto", "Gasto generico")
@@ -419,7 +460,8 @@ function cargarGastosWeb() {
     repintar();
 }
 
-async function cargarGastosApi() {
+//En esta función no uso async pero uso .then en el fetch
+function cargarGastosApi() {
     let usuario = document.getElementById("nombre_usuario")
     //Esto lo hice asi para poder personalizar la peticion hacia la API sin modificar debajo
     const URL = `https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${usuario.value}`
@@ -427,10 +469,10 @@ async function cargarGastosApi() {
         method: "GET",
     }
 
-    await fetch(URL, CONFIG)
+    fetch(URL, CONFIG)
         .then(respuesta => respuesta.json()) //Se pasa a JSON para que pueda luego hacer algo con los datos
         .then(data => { //Con los datos verifico si es un array, si lo es llamo a cargarGastos
-            if(Array.isArray(data)) {
+            if (Array.isArray(data)) {
                 gesPres.cargarGastos(data)
             } else {
                 console.error("La respuesta no es un array")//Sino informo el error
