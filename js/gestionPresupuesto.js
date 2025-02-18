@@ -252,6 +252,10 @@ function cargarGastos(gastosAlmacenamiento) {
 
     // Reseteamos la variable global "gastos"
     gastos = [];
+    if(!gastosAlmacenamiento || gastosAlmacenamiento.length === 0) {
+        console.log("No hay nada que cargar")
+        return
+    }
     // Procesamos cada gasto del listado pasado a la función
     for (let g of gastosAlmacenamiento) {
 

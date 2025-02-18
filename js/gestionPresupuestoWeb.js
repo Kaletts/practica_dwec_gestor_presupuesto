@@ -6,13 +6,16 @@ let bt_anyadirGasto = document.getElementById("anyadirgasto")
 let bt_anyadirGastoForm = document.getElementById("anyadirgasto-formulario")
 let bt_guardarGasto = document.getElementById("guardar-gastos")
 let bt_cargarGastos = document.getElementById("cargar-gastos")
+let bt_cargarGastosApi = document.getElementById("cargar-gastos-api")
+
 
 //Handlers de eventos
 bt_actualizarPresupuesto.addEventListener("click", actualizarPresupuestoWeb)
 bt_anyadirGasto.addEventListener("click", nuevoGastoWeb)
 bt_anyadirGastoForm.addEventListener("click", nuevoGastoWebFormulario)
 bt_guardarGasto.addEventListener("click", guardarGastosWeb)
-bt_cargarGastos.addEventListener("click", cargarGastosWeb);
+bt_cargarGastos.addEventListener("click", cargarGastosWeb)
+bt_cargarGastosApi.addEventListener("click", cargarGastosApi);
 
 
 //Función de dos parámetros que se encargará de escribir el valor (texto) en el elemento HTML con id idElemento indicado:
@@ -400,9 +403,9 @@ function recogeDatosGastos() {
 function guardarGastosWeb() {
 
     let gastosLista = gesPres.listarGastos()
-    
+
     localStorage.setItem("GestorGastosDWEC", JSON.stringify(gastosLista));
-    
+
 }
 
 function cargarGastosWeb() {
@@ -414,6 +417,28 @@ function cargarGastosWeb() {
     gesPres.cargarGastos(gastos);
 
     repintar();
+}
+
+async function cargarGastosApi() {
+    let usuario = document.getElementById("nombre_usuario")
+    //Esto lo hice asi para poder personalizar la peticion hacia la API sin modificar debajo
+    const URL = `https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${usuario.value}`
+    const CONFIG = {
+        method: "GET",
+    }
+
+    await fetch(URL, CONFIG)
+        .then(respuesta => respuesta.json()) //Se pasa a JSON para que pueda luego hacer algo con los datos
+        .then(data => { //Con los datos verifico si es un array, si lo es llamo a cargarGastos
+            if(Array.isArray(data)) {
+                gesPres.cargarGastos(data)
+            } else {
+                console.error("La respuesta no es un array")//Sino informo el error
+            }
+        })
+
+    repintar();
+
 }
 
 export {
