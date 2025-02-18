@@ -4,11 +4,13 @@ import * as gesPres from "./gestionPresupuesto.js"
 let bt_actualizarPresupuesto = document.getElementById("actualizarpresupuesto")
 let bt_anyadirGasto = document.getElementById("anyadirgasto")
 let bt_anyadirGastoForm = document.getElementById("anyadirgasto-formulario")
+let bt_guardarGasto = document.getElementById("guardar-gastos")
 
 //Handlers de eventos
 bt_actualizarPresupuesto.addEventListener("click", actualizarPresupuestoWeb)
 bt_anyadirGasto.addEventListener("click", nuevoGastoWeb)
 bt_anyadirGastoForm.addEventListener("click", nuevoGastoWebFormulario)
+bt_guardarGasto.addEventListener("click", guardarGastosWeb)
 
 //Función de dos parámetros que se encargará de escribir el valor (texto) en el elemento HTML con id idElemento indicado:
 function mostrarDatoEnId(idElemento, valor) {
@@ -392,6 +394,14 @@ function recogeDatosGastos() {
     return gasto
 }
 
+function guardarGastosWeb() {
+
+    let gastosLista = gesPres.listarGastos()
+
+    this.handleEvent = function (evento) {
+        localStorage.setItem("GestorGastosDWEC", JSON.stringify(gastosLista));
+    }
+}
 
 
 
