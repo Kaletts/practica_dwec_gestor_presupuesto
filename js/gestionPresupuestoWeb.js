@@ -5,12 +5,15 @@ let bt_actualizarPresupuesto = document.getElementById("actualizarpresupuesto")
 let bt_anyadirGasto = document.getElementById("anyadirgasto")
 let bt_anyadirGastoForm = document.getElementById("anyadirgasto-formulario")
 let bt_guardarGasto = document.getElementById("guardar-gastos")
+let bt_cargarGastos = document.getElementById("cargar-gastos")
 
 //Handlers de eventos
 bt_actualizarPresupuesto.addEventListener("click", actualizarPresupuestoWeb)
 bt_anyadirGasto.addEventListener("click", nuevoGastoWeb)
 bt_anyadirGastoForm.addEventListener("click", nuevoGastoWebFormulario)
 bt_guardarGasto.addEventListener("click", guardarGastosWeb)
+bt_cargarGastos.addEventListener("click", cargarGastosWeb);
+
 
 //Función de dos parámetros que se encargará de escribir el valor (texto) en el elemento HTML con id idElemento indicado:
 function mostrarDatoEnId(idElemento, valor) {
@@ -397,13 +400,21 @@ function recogeDatosGastos() {
 function guardarGastosWeb() {
 
     let gastosLista = gesPres.listarGastos()
-
-    this.handleEvent = function (evento) {
-        localStorage.setItem("GestorGastosDWEC", JSON.stringify(gastosLista));
-    }
+    
+    localStorage.setItem("GestorGastosDWEC", JSON.stringify(gastosLista));
+    
 }
 
+function cargarGastosWeb() {
+    let gastosGuardados = localStorage.getItem("GestorGastosDWEC");
 
+    //Obtengo los gastos de los datos guardados y si no hay nada devuelvo vacio
+    let gastos = gastosGuardados ? JSON.parse(gastosGuardados) : [];
+
+    gesPres.cargarGastos(gastos);
+
+    repintar();
+}
 
 export {
     mostrarDatoEnId,
