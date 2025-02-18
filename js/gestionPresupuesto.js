@@ -189,9 +189,9 @@ function filtrarGastos(gasto) {
         // Paso a minúsculas todas las etiquetas usando map y toLowerCase
         let etiquetasMinus = gasto.etiquetasTiene.map(etiqueta => etiqueta.toLowerCase());
 
-        // Filtro de resultados sin eliminar los anteriores
+        //Filtro de resultados sin eliminar los anteriores
         resultados = resultados.filter(g => {
-            // Verificamos si alguna de las etiquetas del gasto coincide con las etiquetas que estamos buscando
+            //Verificamos si alguna de las etiquetas del gasto coincide con las etiquetas que estamos buscando
             return g.etiquetas.some(etiqueta => etiquetasMinus.includes(etiqueta.toLowerCase()));
         });
     }
