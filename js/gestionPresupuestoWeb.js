@@ -352,6 +352,10 @@ function EditarHandleFormulario(gasto) {
         let submitHandler = new SubmitFormularioEditado(this.gasto)
         formulario.addEventListener("submit", submitHandler)
 
+        // Manejador para actualizar en la API
+        let botonEditarApi = formulario.querySelector(".gasto-enviar-api");
+        botonEditarApi.addEventListener("click", new EditarGastoApi(this.gasto));
+
         //Manejador del boton cancelar
         let botonCancel = formulario.querySelector("button.cancelar");
         botonCancel.addEventListener("click", (evento) => {
@@ -469,7 +473,7 @@ async function enviarGastoApi(gasto) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(gasto),
-        };
+        }
 
         const respuesta = await fetch(URL, CONFIG)
 
@@ -487,6 +491,71 @@ async function enviarGastoApi(gasto) {
         console.error("Error en EnviarGastoApi:", error)
     }
 
+}
+
+
+function EditarGastoApi(gasto) {
+    this.handleEvent = async function(evento) {
+        evento.preventDefault()
+
+        let formulario = evento.target.closest("form")
+
+        let descripcion = formulario.elements.descripcion.value.trim()
+        let valorTexto = formulario.elements.valor.value.trim()
+        let valorNumerico = parseFloat(valorTexto.replace(/[^0-9.-]+/g, ""))
+        let fecha = formulario.elements.fecha.value.trim()
+        let etiquetas = formulario.elements.etiquetas.value.trim()
+
+        //Validación del form
+        if (!descripcion || isNaN(valorNumerico) || !fecha) {
+            alert("Datos inválidos. Por favor, revisa los valores.")
+            return
+        }
+
+        //Obtener usuario
+        let usuario = document.getElementById("nombre_usuario").value.trim()
+        if (!usuario) {
+            console.error("Error: Verifica el usuario.")
+            return
+        }
+
+        let gastoActualizado = {
+            id: gasto.id,
+            descripcion: descripcion,
+            valor: valorNumerico,
+            fecha: fecha,
+            etiquetas: etiquetas ? etiquetas.split(",").map(e => e.trim()) : [],
+        };
+
+        //Enviar datos a la API
+        const URL = `https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${usuario}/${gasto.id}`
+        const CONFIG = {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(gastoActualizado),
+        };
+
+        try {
+            let respuesta = await fetch(URL, CONFIG)
+
+            if (!respuesta.ok) {
+                throw new Error(`Error al actualizar: ${respuesta.statusText}`)
+            }
+
+            console.log("Gasto actualizado en la API correctamente.")
+            
+            //Recargar lista y actualizar la UI
+            await gesPres.cargarGastosApi()
+            repintar()
+
+            //Eliminar el formulario de edición después de actualizar
+            formulario.remove()
+        } catch (error) {
+            console.error("Error en EditarGastoApi:", error)
+        }
+    }
 }
 
 
