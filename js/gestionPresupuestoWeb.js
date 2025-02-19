@@ -188,6 +188,7 @@ function nuevoGastoWebFormulario() {
     let plantillaFormulario = document.getElementById("formulario-template").content.cloneNode(true);
     //Se accede con selectores como si fuera un HTML más.
     let formulario = plantillaFormulario.querySelector("form");
+    let botonEnviarApi = plantillaFormulario.querySelector(".gasto-enviar-api");
 
     let botonAnyadir = document.getElementById("anyadirgasto-formulario");
     botonAnyadir.setAttribute("disabled", "true");
@@ -220,6 +221,35 @@ function nuevoGastoWebFormulario() {
 
         //Reactivo el boton, elimino el formulario y repinto.
         botonAnyadir.removeAttribute("disable")
+        formulario.remove()
+    })
+
+    //Manejador para el envío de datos a la API
+    botonEnviarApi.addEventListener("click", function (event) {
+        event.preventDefault()
+
+        let descripcion = formulario.elements.descripcion.value.trim();
+        let valorTexto = formulario.elements.valor.value.trim();
+        let valorNumerico = parseFloat(valorTexto.replace(/[^0-9.-]+/g, ""));
+        let fecha = formulario.elements.fecha.value.trim();
+        let etiquetas = formulario.elements.etiquetas.value.trim();
+
+        if (!descripcion || isNaN(valorNumerico) || !fecha) {
+            alert("Datos inválidos. Por favor, verifica los valores.")
+            return;
+        }
+
+        let etiquetasArray = etiquetas.split(",")
+
+        let gasto = new gesPres.CrearGasto(descripcion, valorNumerico, fecha, etiquetasArray)
+        gesPres.anyadirGasto(gasto)
+
+        //Enviar a la API
+        enviarGastoApi(gasto)
+        repintar()
+
+        //Reactivar el botón de añadir y eliminar el formulario
+        botonAnyadir.removeAttribute("disabled")
         formulario.remove()
     })
 
@@ -390,31 +420,31 @@ function BorrarEtiquetasHandle(gasto, etiqueta) {
 
 //En esta funcion si uso async
 function BorrarHandleApi(gasto) {
-    this.handleEvent = async function(evento) {
+    this.handleEvent = async function (evento) {
         try {
             let usuario = document.getElementById("nombre_usuario").value
-    
+
             if (!usuario) {
                 console.error("Verifica el usuario!")
                 return
             }
-    
+
             const URL = `https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${usuario}/${gasto.id}`
             const CONFIG = {
                 method: "DELETE",
             };
-    
+
             const respuesta = await fetch(URL, CONFIG)
-    
+
             if (!respuesta.ok) {
                 throw new Error(`Error al eliminar gasto: ${respuesta.statusText}`)
             }
-    
+
             console.log("Gasto eliminado correctamente")
-    
+
             //Aqui no sé si debo llamar con await o no a la API
             await gesPres.cargarGastosApi()
-    
+
             repintar()
         } catch (error) {
             console.error("Error en BorrarHandleApi:", error)
@@ -422,6 +452,42 @@ function BorrarHandleApi(gasto) {
     }
 }
 
+
+async function enviarGastoApi(gasto) {
+    try {
+        let usuario = document.getElementById("nombre_usuario").value
+
+        if (!usuario) {
+            console.error("Verifica el usuario!")
+            return
+        }
+
+        const URL = `https://suhhtqjccd.execute-api.eu-west-1.amazonaws.com/latest/${usuario}/${gasto.id}`
+        const CONFIG = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(gasto),
+        };
+
+        const respuesta = await fetch(URL, CONFIG)
+
+        if (!respuesta.ok) {
+            throw new Error(`Error al enviar gasto: ${respuesta.statusText}`)
+        }
+
+        console.log("Gasto enviado correctamente")
+
+        //Aqui no sé si debo llamar con await o no a la API
+        await gesPres.cargarGastosApi()
+
+        repintar()
+    } catch (error) {
+        console.error("Error en EnviarGastoApi:", error)
+    }
+
+}
 
 
 //Funcion auxiliar que crea el objeto gasto con todos los prompts para no repetir en editarhandle y en nuevo gasto
