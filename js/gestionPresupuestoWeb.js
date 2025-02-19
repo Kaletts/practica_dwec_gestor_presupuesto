@@ -547,7 +547,7 @@ function EditarGastoApi(gasto) {
             console.log("Gasto actualizado en la API correctamente.")
             
             //Recargar lista y actualizar la UI
-            await gesPres.cargarGastosApi()
+            await cargarGastosApi()
             repintar()
 
             //Eliminar el formulario de edición después de actualizar
